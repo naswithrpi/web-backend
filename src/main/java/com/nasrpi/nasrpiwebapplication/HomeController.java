@@ -9,6 +9,7 @@ import java.io.File;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,15 +28,20 @@ import io.swagger.annotations.Api;
 @RequestMapping
 public class HomeController {
 
+	@Autowired
+	private StorageHandler storageHandler;
+	
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
 	public String sayHello() {
 		return ("hello");
 	}
 	
-	@RequestMapping(value = "/local_storage", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/localStorage", method = RequestMethod.GET, produces = "application/json")
 	public String getStorageData() {
 		//String data = StorageHandler.getInstance().queryStorage();
-		JSONObject data = queryStorage();
+		//JSONObject data = queryStorage();
+		JSONObject data = storageHandler.queryStorage();
+		
 		return data.toString();
 	}
 	
@@ -54,6 +60,9 @@ public class HomeController {
 		
 		for (File file : files) {
 			JSONObject json = new JSONObject();
+			if(file.getName().equals("trialfile.txt")) {
+				System.out.println(file.delete());
+			}
 			try {
 				json.put("type", file.isDirectory()?"directory" : "file");
 				json.put("name", file.getName());
@@ -78,4 +87,5 @@ public class HomeController {
 		jsonData.put("files", jsonFiles);
 		return jsonData;
 	}
+
 }

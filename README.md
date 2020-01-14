@@ -1,4 +1,4 @@
-# Web Backend of NAS Raspberry Pi
+# Web Backend of NAS Raspberry Pi 3b+
 
 ## How to run
 
