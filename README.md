@@ -1,8 +1,6 @@
-# Web Backend of Network Attached Storage with Raspberry Pi
-----------
+# Web Backend of NAS Rpi
 
 ## How to run
-----------
 
 1. Clone the project into a working directory
 2. Import the project in Eclipse as an existing Maven Project
