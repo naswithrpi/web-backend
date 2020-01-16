@@ -7,10 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
-import io.swagger.annotations.Api;
-
 /*
- * Singleton handler class for interacting with local storage of the NAS.
+ * Handler class for interacting with local storage of the NAS.
  * 
  * @author grandolf49
  */
