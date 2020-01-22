@@ -46,5 +46,10 @@ public class HomeController {
 	public boolean delete(@RequestBody final String path) {
 		return homeRepository.delete(path);
 	}
+	
+	@RequestMapping(value = "/createDirectory", method = RequestMethod.POST)
+	public boolean createDirectory(@RequestBody final String directoryPath) {
+		return homeRepository.createDirectory(directoryPath);
+	}
 
 }

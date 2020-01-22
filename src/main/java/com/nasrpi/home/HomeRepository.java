@@ -72,5 +72,25 @@ public class HomeRepository {
 
 		return isFolderDeleted;
 	}
+	
+	public boolean createDirectory(final String directoryPath) {
+
+		Path newDirectoryPath = Paths.get(directoryPath);
+
+		boolean directoryExists = Files.exists(newDirectoryPath);
+		if (!directoryExists) {
+			try {
+				Files.createDirectories(newDirectoryPath);
+				return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		} 
+		else {
+			return false;
+		}
+
+	}
 
 }
