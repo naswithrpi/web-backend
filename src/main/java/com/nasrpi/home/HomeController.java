@@ -25,9 +25,6 @@ import io.swagger.annotations.Api;
 public class HomeController {
 
 	@Autowired
-	private StorageHandler storageHandler;
-
-	@Autowired
 	private HomeRepository homeRepository;
 
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
@@ -36,18 +33,18 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "/getAllRootItems", method = RequestMethod.GET, produces = "application/json")
-	public String getAllRootItems() {
-		JSONObject data = storageHandler.getAllRootItems();
-		if (data != null) {
-			return data.toString();
-		} else {
-			return "{ \"error\" : \"No external device found\"}";
-		}
+	public List<String> getAllRootItems() {
+		return homeRepository.getContents("D:\\");
 	}
 
 	@RequestMapping(value = "/getContents", method = RequestMethod.POST, produces = "application/json")
 	public List<String> getContents(@RequestBody final String path) {
-
 		return homeRepository.getContents(path);
 	}
+
+	@RequestMapping(value = "/delete", method = RequestMethod.POST, produces = "application/json")
+	public boolean delete(@RequestBody final String path) {
+		return homeRepository.delete(path);
+	}
+
 }
