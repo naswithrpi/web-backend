@@ -1,3 +1,7 @@
+/* 
+ * Copyright nasrpi 2020
+ */
+
 package com.nasrpi.home;
 
 import java.io.File;
@@ -8,37 +12,51 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Repository;
 
+/**
+ * File related operations for Home Controller
+ * @author zuilee
+ */
+
 @Repository
 public class HomeRepository {
 
-	public List<String> getContents(final String path) {
+	public List<GetContentsModel> getContents(final String path) {
 
-		List<GetContentsModel> getContentsList = new ArrayList<GetContentsModel>();
+		List<GetContentsModel> getContentsArray = new ArrayList<GetContentsModel>();
 
-		List<String> result = new ArrayList<>();
+		try {
+			Stream<Path> file = Files.list(Paths.get(path)).filter(Files::isRegularFile);
+			List<String> fileArray = file.map(x -> x.toString()).collect(Collectors.toList());
 
-		try (Stream<Path> walk = Files.list(Paths.get(path))) {
+			for (String fileName : fileArray) {
+				GetContentsModel getContents = new GetContentsModel();
+				getContents.setFilePath(fileName);
+				getContents.setDirectory(false);
 
-			GetContentsModel getContentsModel = new GetContentsModel();
+				getContentsArray.add(getContents);
+			}
 
-			getContentsModel.setFilePath(walk.toString());
-			System.out.println("model : " + getContentsModel.getFilePath());
+			Stream<Path> directory = Files.list(Paths.get(path)).filter(Files::isDirectory);
+			List<String> directoryArray = directory.map(x -> x.toString()).collect(Collectors.toList());
 
-			// result = (walk.filter(Files::isRegularFile)).map(x ->
-			// x.toString()).collect(Collectors.toList());
+			for (String directoryName : directoryArray) {
+				GetContentsModel getContents = new GetContentsModel();
+				getContents.setFilePath(directoryName);
+				getContents.setDirectory(true);
 
-//			result.addAll(walk.filter(Files::isDirectory)
-//					.map(x -> x.toString()).collect(Collectors.toList()));
+				getContentsArray.add(getContents);
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		return result;
+		return getContentsArray;
 	}
 
 	public boolean delete(final String path) {
