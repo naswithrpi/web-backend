@@ -2,10 +2,13 @@
  * Copyright nasrpi 2020
  */
 
-package com.nasrpi.nasrpiwebapplication;
+package com.nasrpi.home;
+
+import java.util.List;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +27,9 @@ public class HomeController {
 	@Autowired
 	private StorageHandler storageHandler;
 
+	@Autowired
+	private HomeRepository homeRepository;
+
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
 	public String sayHello() {
 		return ("hello");
@@ -37,5 +43,11 @@ public class HomeController {
 		} else {
 			return "{ \"error\" : \"No external device found\"}";
 		}
+	}
+
+	@RequestMapping(value = "/getContents", method = RequestMethod.POST, produces = "application/json")
+	public List<String> getContents(@RequestBody final String path) {
+
+		return homeRepository.getContents(path);
 	}
 }
