@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * File related operations for Home Controller
+ * 
  * @author zuilee
  */
 
@@ -72,7 +73,7 @@ public class HomeRepository {
 
 		return isFolderDeleted;
 	}
-	
+
 	public boolean createDirectory(final String directoryPath) {
 
 		Path newDirectoryPath = Paths.get(directoryPath);
@@ -86,8 +87,7 @@ public class HomeRepository {
 				e.printStackTrace();
 				return false;
 			}
-		} 
-		else {
+		} else {
 			return false;
 		}
 

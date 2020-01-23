@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nasrpi.common.KeyConstants;
+
 import io.swagger.annotations.Api;
 
 /**
  * Controller to consume Home page api endpoints
+ * 
  * @author zuilee
  */
 
@@ -34,7 +37,7 @@ public class HomeController {
 
 	@RequestMapping(value = "/getAllRootItems", method = RequestMethod.GET, produces = "application/json")
 	public List<GetContentsModel> getAllRootItems() {
-		return homeRepository.getContents("D:\\");
+		return homeRepository.getContents(KeyConstants.ROOT_PATH);
 	}
 
 	@RequestMapping(value = "/getContents", method = RequestMethod.POST, produces = "application/json")
@@ -46,7 +49,7 @@ public class HomeController {
 	public boolean delete(@RequestBody final String path) {
 		return homeRepository.delete(path);
 	}
-	
+
 	@RequestMapping(value = "/createDirectory", method = RequestMethod.POST)
 	public boolean createDirectory(@RequestBody final String directoryPath) {
 		return homeRepository.createDirectory(directoryPath);
