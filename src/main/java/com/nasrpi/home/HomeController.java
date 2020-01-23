@@ -30,11 +30,6 @@ public class HomeController {
 	@Autowired
 	private HomeRepository homeRepository;
 
-	@RequestMapping(value = "/hello", method = RequestMethod.GET)
-	public String sayHello() {
-		return ("hello");
-	}
-
 	@RequestMapping(value = "/getAllRootItems", method = RequestMethod.GET, produces = "application/json")
 	public List<GetContentsModel> getAllRootItems() {
 		return homeRepository.getContents(KeyConstants.ROOT_PATH);
@@ -53,6 +48,16 @@ public class HomeController {
 	@RequestMapping(value = "/createDirectory", method = RequestMethod.POST)
 	public boolean createDirectory(@RequestBody final String directoryPath) {
 		return homeRepository.createDirectory(directoryPath);
+	}
+
+	@RequestMapping(value = "/moveFolder", method = RequestMethod.POST, produces = "application/json")
+	public boolean moveFolder(@RequestBody final MoveModel moveModel) {
+		return homeRepository.moveFolder(moveModel.getSource(), moveModel.getDestination());
+	}
+	
+	@RequestMapping(value = "/moveFile", method = RequestMethod.POST, produces = "application/json")
+	public boolean moveFile(@RequestBody final MoveModel moveModel) {
+		return homeRepository.moveFile(moveModel.getSource(), moveModel.getDestination());
 	}
 
 }
