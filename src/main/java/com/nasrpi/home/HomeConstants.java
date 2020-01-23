@@ -11,4 +11,6 @@ package com.nasrpi.home;
 
 public class HomeConstants {
 	
+	public static final String STRING_FILE_COPY = " - Copy";
+	
 }

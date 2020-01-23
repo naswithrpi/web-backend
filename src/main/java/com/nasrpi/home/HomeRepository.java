@@ -20,6 +20,8 @@ import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Repository;
 
+import com.nasrpi.common.KeyConstants;
+
 /**
  * File related operations for Home Controller
  * 
@@ -97,7 +99,7 @@ public class HomeRepository {
 
 	public String getFileNameFromPath(String path) {
 
-		int idx = path.lastIndexOf("\\");
+		int idx = path.lastIndexOf(KeyConstants.DIRECTORY_DELIMITER);
 
 		return path.substring(idx + 1);
 	}
@@ -106,7 +108,7 @@ public class HomeRepository {
 
 		boolean isFileMoved = true;
 
-		destination += "\\";
+		destination += KeyConstants.DIRECTORY_DELIMITER;
 		destination += getFileNameFromPath(source);
 
 		File srcDir = new File(source);
@@ -117,7 +119,7 @@ public class HomeRepository {
 		} catch (FileExistsException e) {
 			try {
 				isFileMoved = true;
-				FileUtils.moveDirectory(srcDir, new File(destination + " - Copy"));
+				FileUtils.moveDirectory(srcDir, new File(destination + HomeConstants.STRING_FILE_COPY));
 			} catch (IOException e1) {
 				isFileMoved = false;
 				e1.printStackTrace();
@@ -139,25 +141,18 @@ public class HomeRepository {
 
 		try {
 			FileUtils.moveFileToDirectory(srcDir, destDir, true);
-
 		} catch (FileExistsException e) {
-
 			isFileMoved = true;
 			try {
 				String fileName = getFileNameFromPath(source);
-
-				FileUtils.moveFile(srcDir, new File(destination + "\\" + fileName + " - Copy"));
-
+				FileUtils.moveFile(srcDir, new File(
+						destination + KeyConstants.DIRECTORY_DELIMITER + fileName + HomeConstants.STRING_FILE_COPY));
 			} catch (IOException e1) {
-
 				isFileMoved = false;
-
 				e1.printStackTrace();
 			}
 		} catch (IOException e) {
-
 			isFileMoved = false;
-
 			e.printStackTrace();
 		}
 
