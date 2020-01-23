@@ -9,13 +9,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileExistsException;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Repository;
+
+import com.nasrpi.common.KeyConstants;
 
 /**
  * File related operations for Home Controller
@@ -90,6 +95,68 @@ public class HomeRepository {
 		} else {
 			return false;
 		}
+	}
+
+	public String getFileNameFromPath(String path) {
+
+		int idx = path.lastIndexOf(KeyConstants.DIRECTORY_DELIMITER);
+
+		return path.substring(idx + 1);
+	}
+
+	public boolean moveFolder(String source, String destination) {
+
+		boolean isFileMoved = true;
+
+		destination += KeyConstants.DIRECTORY_DELIMITER;
+		destination += getFileNameFromPath(source);
+
+		File srcDir = new File(source);
+		File destDir = new File(destination);
+
+		try {
+			FileUtils.moveDirectory(srcDir, destDir);
+		} catch (FileExistsException e) {
+			try {
+				isFileMoved = true;
+				FileUtils.moveDirectory(srcDir, new File(destination + HomeConstants.STRING_FILE_COPY));
+			} catch (IOException e1) {
+				isFileMoved = false;
+				e1.printStackTrace();
+			}
+		} catch (IOException e) {
+			isFileMoved = false;
+			e.printStackTrace();
+		}
+
+		return isFileMoved;
+	}
+
+	public boolean moveFile(String source, String destination) {
+
+		boolean isFileMoved = true;
+
+		File srcDir = new File(source);
+		File destDir = new File(destination);
+
+		try {
+			FileUtils.moveFileToDirectory(srcDir, destDir, true);
+		} catch (FileExistsException e) {
+			isFileMoved = true;
+			try {
+				String fileName = getFileNameFromPath(source);
+				FileUtils.moveFile(srcDir, new File(
+						destination + KeyConstants.DIRECTORY_DELIMITER + fileName + HomeConstants.STRING_FILE_COPY));
+			} catch (IOException e1) {
+				isFileMoved = false;
+				e1.printStackTrace();
+			}
+		} catch (IOException e) {
+			isFileMoved = false;
+			e.printStackTrace();
+		}
+
+		return isFileMoved;
 
 	}
 
