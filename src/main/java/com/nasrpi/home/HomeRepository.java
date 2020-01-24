@@ -159,5 +159,44 @@ public class HomeRepository {
 		return isFileMoved;
 
 	}
+	
+	public List<GetContentsModel> searchInCurrentDirectory(final String searchKey, final String currentDirectory) {
+
+		List<GetContentsModel> getContentsArray = new ArrayList<GetContentsModel>();
+
+		try {
+			Stream<Path> file = Files.walk(Paths.get(currentDirectory)).filter(Files::isRegularFile);
+			List<String> fileArray = file.map(x -> x.toString()).collect(Collectors.toList());
+
+			for (String filePath : fileArray) {
+				if (filePath.contains(searchKey)) {
+					GetContentsModel getContents = new GetContentsModel();
+					getContents.setFilePath(filePath);
+					getContents.setDirectory(false);
+
+					getContentsArray.add(getContents);
+				}
+
+			}
+
+			Stream<Path> directory = Files.walk(Paths.get(currentDirectory)).filter(Files::isDirectory);
+			List<String> directoryArray = directory.map(x -> x.toString()).collect(Collectors.toList());
+
+			for (String directoryPath : directoryArray) {
+				if (directoryPath.contains(searchKey)) {
+					GetContentsModel getContents = new GetContentsModel();
+					getContents.setFilePath(directoryPath);
+					getContents.setDirectory(true);
+
+					getContentsArray.add(getContents);
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return getContentsArray;
+	}
 
 }

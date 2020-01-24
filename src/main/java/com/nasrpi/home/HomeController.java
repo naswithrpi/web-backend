@@ -49,6 +49,11 @@ public class HomeController {
 	public boolean createDirectory(@RequestBody final String directoryPath) {
 		return homeRepository.createDirectory(directoryPath);
 	}
+	
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public List<GetContentsModel> search(final String searchKey, final String currentPath) {
+		return homeRepository.searchInCurrentDirectory(searchKey, currentPath);
+	}
 
 	@RequestMapping(value = "/moveFolder", method = RequestMethod.POST, produces = "application/json")
 	public boolean moveFolder(@RequestBody final MoveModel moveModel) {
