@@ -12,8 +12,13 @@ package com.nasrpi.common;
 
 public class KeyConstants {
 
-	public static final String ROOT_PATH = "D:\\";
+	public static final String ROOT_PATH = "/media/pi/D690-1E72/";
 
-	public static final String DIRECTORY_DELIMITER = "\\";
+	/**
+	 * Path for windows
+	 */
+	// public static final String ROOT_PATH = "D:/";
+
+	public static final String DIRECTORY_DELIMITER = "/";
 
 }
