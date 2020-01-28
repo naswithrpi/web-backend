@@ -59,5 +59,4 @@ public class HomeController {
 	public boolean moveFile(@RequestBody final MoveModel moveModel) {
 		return homeRepository.moveFile(moveModel.getSource(), moveModel.getDestination());
 	}
-
 }
