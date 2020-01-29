@@ -6,9 +6,7 @@ package com.nasrpi.filesharing;
  * @author grandlf49
  */
 public class FileStorageException extends RuntimeException {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 6269449526952575984L;
 
 	public FileStorageException(String message) {
