@@ -1,5 +1,10 @@
 package com.nasrpi.filesharing;
 
+/**
+ * Exception class for FileNotFoundException
+ * 
+ * @author grandolf49
+ */
 public class UploadFileResponse {
 
 	private String fileName;

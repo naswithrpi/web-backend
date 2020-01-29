@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * A service class that provides upload and download file service
  * 
- * @author grandlf49
+ * @author grandolf49
  */
 
 @Service

@@ -3,7 +3,7 @@ package com.nasrpi.filesharing;
 /**
  * Exception class for FileStorageException
  * 
- * @author grandlf49
+ * @author grandolf49
  */
 public class FileStorageException extends RuntimeException {
 

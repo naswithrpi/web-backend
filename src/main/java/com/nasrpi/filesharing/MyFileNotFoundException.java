@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Exception class for FileNotFoundException
  * 
- * @author grandlf49
+ * @author grandolf49
  */
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
