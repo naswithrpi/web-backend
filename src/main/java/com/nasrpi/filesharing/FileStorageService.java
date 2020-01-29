@@ -14,52 +14,47 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * A service class that provides upload and download file service
+ * 
+ * @author grandlf49
+ */
+
 @Service
 public class FileStorageService {
 
-	private final Path fileStorageLocation;
+	public String storeFile(MultipartFile file, String uploadPath) {
 
-	@Autowired
-	public FileStorageService(FileStorageProperties fileStorageProperties) {
-		this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir()).toAbsolutePath().normalize();
-
-		try {
-			Files.createDirectories(this.fileStorageLocation);
-		} catch (Exception ex) {
-			throw new FileStorageException("Could not create the directory where the uploaded files will be stored.",
-					ex);
-		}
-	}
-
-	public String storeFile(MultipartFile file) {
-		// Normalize file name
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
 		try {
-			// Check if the file's name contains invalid characters
 			if (fileName.contains("..")) {
 				throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
 			}
 
-			// Copy file to the target location (Replacing existing file with the same name)
-			Path targetLocation = this.fileStorageLocation.resolve(fileName);
+			Path targetLocation = Paths.get(uploadPath).resolve(fileName);
 			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
 			return fileName;
+
 		} catch (IOException ex) {
 			throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
 		}
+
 	}
 
-	public Resource loadFileAsResource(String fileName) {
+	public Resource loadFileAsResource(String fileName, String downloadFilePath) {
+
 		try {
-			Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+			Path filePath = Paths.get(downloadFilePath).resolve(fileName).normalize();
 			Resource resource = new UrlResource(filePath.toUri());
+
 			if (resource.exists()) {
 				return resource;
 			} else {
 				throw new MyFileNotFoundException("File not found " + fileName);
 			}
+
 		} catch (MalformedURLException ex) {
 			throw new MyFileNotFoundException("File not found " + fileName, ex);
 		}
