@@ -51,8 +51,8 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public List<GetContentsModel> search(final String searchKey, final String currentPath) {
-		return homeRepository.searchInCurrentDirectory(searchKey, currentPath);
+	public List<GetContentsModel> search(@RequestBody final SearchModel searchModel) {
+		return homeRepository.searchInCurrentDirectory(searchModel);
 	}
 
 	@RequestMapping(value = "/moveFolder", method = RequestMethod.POST, produces = "application/json")

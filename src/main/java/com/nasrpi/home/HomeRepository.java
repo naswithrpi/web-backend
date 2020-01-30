@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -160,10 +159,13 @@ public class HomeRepository {
 
 	}
 	
-	public List<GetContentsModel> searchInCurrentDirectory(final String searchKey, final String currentDirectory) {
+	public List<GetContentsModel> searchInCurrentDirectory(final SearchModel searchModel) {
 
 		List<GetContentsModel> getContentsArray = new ArrayList<GetContentsModel>();
 
+		final String currentDirectory = searchModel.getCurrentPath();
+		final String searchKey = searchModel.getSearchKey();
+		
 		try {
 			Stream<Path> file = Files.walk(Paths.get(currentDirectory)).filter(Files::isRegularFile);
 			List<String> fileArray = file.map(x -> x.toString()).collect(Collectors.toList());
