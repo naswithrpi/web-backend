@@ -59,5 +59,10 @@ public class HomeController {
 	public boolean moveFile(@RequestBody final MoveModel moveModel) {
 		return homeRepository.moveFile(moveModel.getSource(), moveModel.getDestination());
 	}
+	
+	@RequestMapping(value = "/getSpaceUsage", method = RequestMethod.GET, produces = "application/json")
+	public List<GetSpaceModel> getSpaceUsage() {
+		return homeRepository.getSpaceUsage(KeyConstants.ROOT_PATH);
+	}
 
 }
