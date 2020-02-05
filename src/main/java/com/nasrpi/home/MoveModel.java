@@ -9,16 +9,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-
 /**
  * Request Model for /move api call
  * 
  * @author grandolf49
  */
+
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MoveModel {
 
 	private String source;

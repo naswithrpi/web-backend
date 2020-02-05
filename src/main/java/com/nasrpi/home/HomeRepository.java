@@ -15,11 +15,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.nasrpi.common.KeyConstants;
+import com.nasrpi.filesharing.FileStorageService;
+import com.nasrpi.filesharing.UploadFileResponseModel;
 
 /**
  * File related operations for Home Controller
@@ -96,14 +106,14 @@ public class HomeRepository {
 		}
 	}
 
-	public String getFileNameFromPath(String path) {
+	public String getFileNameFromPath(final String path) {
 
 		int idx = path.lastIndexOf(KeyConstants.DIRECTORY_DELIMITER);
 
 		return path.substring(idx + 1);
 	}
 
-	public boolean moveFolder(String source, String destination) {
+	public boolean moveFolder(final String source, String destination) {
 
 		boolean isFileMoved = true;
 
@@ -131,7 +141,7 @@ public class HomeRepository {
 		return isFileMoved;
 	}
 
-	public boolean moveFile(String source, String destination) {
+	public boolean moveFile(final String source, final String destination) {
 
 		boolean isFileMoved = true;
 
@@ -158,14 +168,48 @@ public class HomeRepository {
 		return isFileMoved;
 
 	}
-	
+
+	public UploadFileResponseModel uploadFile(final MultipartFile file, final String uploadPath,
+			final FileStorageService fileStorageService) {
+
+		String fileName = fileStorageService.storeFile(file, uploadPath);
+
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+				.path(HomeConstants.STRING_DOWNLOAD_FILE).path(fileName).toUriString();
+
+		return new UploadFileResponseModel(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+	}
+
+	public ResponseEntity<Resource> downloadFile(final String fileName, final String filePath,
+			final HttpServletRequest request, final FileStorageService fileStorageService) {
+		// Load file as Resource
+		Resource resource = fileStorageService.loadFileAsResource(fileName, filePath);
+
+		// Try to determine file's content type
+		String contentType = null;
+		try {
+			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+		} catch (IOException ex) {
+		}
+
+		// Fallback to the default content type if type could not be determined
+		if (contentType == null) {
+			contentType = "application/octet-stream";
+		}
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, HomeConstants.ATTACHMENT_HEADER + HomeConstants.DOUBLE_QUOTES
+						+ resource.getFilename() + HomeConstants.DOUBLE_QUOTES)
+				.body(resource);
+	}
+
 	public List<GetContentsModel> searchInCurrentDirectory(final SearchModel searchModel) {
 
 		List<GetContentsModel> getContentsArray = new ArrayList<GetContentsModel>();
 
 		final String currentDirectory = searchModel.getCurrentPath();
 		final String searchKey = searchModel.getSearchKey();
-		
+
 		try {
 			Stream<Path> file = Files.walk(Paths.get(currentDirectory)).filter(Files::isRegularFile);
 			List<String> fileArray = file.map(x -> x.toString()).collect(Collectors.toList());
@@ -199,25 +243,26 @@ public class HomeRepository {
 		}
 
 		return getContentsArray;
+
 	}
 
 	public List<GetSpaceModel> getSpaceUsage(String rootPath) {
-		
+
 		List<GetSpaceModel> getSpaceArray = new ArrayList<GetSpaceModel>();
 		GetSpaceModel getSpace = new GetSpaceModel();
-		File freeSpace =  new File(rootPath);
-		
+		File freeSpace = new File(rootPath);
+
 		try {
-		getSpace.setTotalSpace(freeSpace.getTotalSpace());
-		getSpace.setFreeSpace(freeSpace.getFreeSpace());
-		getSpace.setUsedSpace(getSpace.getTotalSpace() - getSpace.getFreeSpace());
-		
-		getSpaceArray.add(getSpace);
-		
+			getSpace.setTotalSpace(freeSpace.getTotalSpace());
+			getSpace.setFreeSpace(freeSpace.getFreeSpace());
+			getSpace.setUsedSpace(getSpace.getTotalSpace() - getSpace.getFreeSpace());
+
+			getSpaceArray.add(getSpace);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return getSpaceArray;
 	}
 
