@@ -201,4 +201,24 @@ public class HomeRepository {
 		return getContentsArray;
 	}
 
+	public List<GetSpaceModel> getSpaceUsage(String rootPath) {
+		
+		List<GetSpaceModel> getSpaceArray = new ArrayList<GetSpaceModel>();
+		GetSpaceModel getSpace = new GetSpaceModel();
+		File freeSpace =  new File(rootPath);
+		
+		try {
+		getSpace.setTotalSpace(freeSpace.getTotalSpace());
+		getSpace.setFreeSpace(freeSpace.getFreeSpace());
+		getSpace.setUsedSpace(getSpace.getTotalSpace() - getSpace.getFreeSpace());
+		
+		getSpaceArray.add(getSpace);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return getSpaceArray;
+	}
+
 }

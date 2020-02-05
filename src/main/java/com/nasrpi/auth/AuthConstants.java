@@ -15,5 +15,9 @@ import com.nasrpi.common.KeyConstants;
 public class AuthConstants {
 
 	public static final String IS_CONFIG = KeyConstants.ROOT_PATH + ".config.txt";
-
+	
+	public static final String WHITE_SPACE = " ";
+	
+	public static final String NEW_LINE = "\n";
+	
 }
