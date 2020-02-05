@@ -29,7 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.nasrpi.common.KeyConstants;
 import com.nasrpi.filesharing.FileStorageService;
-import com.nasrpi.filesharing.UploadFileResponse;
+import com.nasrpi.filesharing.UploadFileResponseModel;
 
 /**
  * File related operations for Home Controller
@@ -106,14 +106,14 @@ public class HomeRepository {
 		}
 	}
 
-	public String getFileNameFromPath(String path) {
+	public String getFileNameFromPath(final String path) {
 
 		int idx = path.lastIndexOf(KeyConstants.DIRECTORY_DELIMITER);
 
 		return path.substring(idx + 1);
 	}
 
-	public boolean moveFolder(String source, String destination) {
+	public boolean moveFolder(final String source, String destination) {
 
 		boolean isFileMoved = true;
 
@@ -141,7 +141,7 @@ public class HomeRepository {
 		return isFileMoved;
 	}
 
-	public boolean moveFile(String source, String destination) {
+	public boolean moveFile(final String source, final String destination) {
 
 		boolean isFileMoved = true;
 
@@ -169,18 +169,19 @@ public class HomeRepository {
 
 	}
 
-	public UploadFileResponse uploadFile(MultipartFile file, String uploadPath, FileStorageService fileStorageService) {
+	public UploadFileResponseModel uploadFile(final MultipartFile file, final String uploadPath,
+			final FileStorageService fileStorageService) {
 
 		String fileName = fileStorageService.storeFile(file, uploadPath);
 
-		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/downloadFile/")
-				.path(fileName).toUriString();
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+				.path(HomeConstants.STRING_DOWNLOAD_FILE).path(fileName).toUriString();
 
-		return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+		return new UploadFileResponseModel(fileName, fileDownloadUri, file.getContentType(), file.getSize());
 	}
 
-	public ResponseEntity<Resource> downloadFile(String fileName, String filePath, HttpServletRequest request,
-			FileStorageService fileStorageService) {
+	public ResponseEntity<Resource> downloadFile(final String fileName, final String filePath,
+			final HttpServletRequest request, final FileStorageService fileStorageService) {
 		// Load file as Resource
 		Resource resource = fileStorageService.loadFileAsResource(fileName, filePath);
 
@@ -197,7 +198,8 @@ public class HomeRepository {
 		}
 
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.header(HttpHeaders.CONTENT_DISPOSITION, HomeConstants.ATTACHMENT_HEADER + HomeConstants.DOUBLE_QUOTES
+						+ resource.getFilename() + HomeConstants.DOUBLE_QUOTES)
 				.body(resource);
 	}
 

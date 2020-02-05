@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.nasrpi.common.KeyConstants;
 import com.nasrpi.filesharing.FileStorageService;
-import com.nasrpi.filesharing.UploadFileResponse;
+import com.nasrpi.filesharing.UploadFileResponseModel;
 
 import io.swagger.annotations.Api;
 
@@ -73,16 +71,16 @@ public class HomeController {
 		return homeRepository.moveFile(moveModel.getSource(), moveModel.getDestination());
 	}
 
-	@PostMapping("/uploadFile")
-	public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file,
+	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST, produces = KeyConstants.APPLICATION_JSON)
+	public UploadFileResponseModel uploadFile(@RequestParam("file") MultipartFile file,
 			@RequestParam("path") final String uploadPath) {
 		return homeRepository.uploadFile(file, uploadPath, fileStorageService);
 	}
 
-	@GetMapping("/downloadFile")
-	public ResponseEntity<Resource> downloadFile(@RequestParam("path") final String filePath,
-			@RequestParam("fileName") final String fileName, HttpServletRequest request) {
-		return homeRepository.downloadFile(fileName, filePath, request, fileStorageService);
+	@RequestMapping(value = "/downloadFile", method = RequestMethod.POST)
+	public ResponseEntity<Resource> downloadFile(@RequestBody final DownloadFileModel downloadFileModel,
+			HttpServletRequest request) {
+		return homeRepository.downloadFile(downloadFileModel.getFileName(), downloadFileModel.getFilePath(), request,
+				fileStorageService);
 	}
-
 }

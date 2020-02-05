@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nasrpi.home.HomeConstants;
+
 /**
  * A service class that provides upload and download file service
  * 
@@ -34,7 +36,7 @@ public class FileStorageService {
 			return fileName;
 
 		} catch (IOException ex) {
-			throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
+			throw new FileStorageException(HomeConstants.STRING_COULD_NOT_STORE_FILE + fileName, ex);
 		}
 
 	}
@@ -48,11 +50,11 @@ public class FileStorageService {
 			if (resource.exists()) {
 				return resource;
 			} else {
-				throw new MyFileNotFoundException("File not found " + fileName);
+				throw new MyFileNotFoundException(HomeConstants.STRING_FILE_NOT_FOUND + fileName);
 			}
 
 		} catch (MalformedURLException ex) {
-			throw new MyFileNotFoundException("File not found " + fileName, ex);
+			throw new MyFileNotFoundException(HomeConstants.STRING_FILE_NOT_FOUND + fileName, ex);
 		}
 	}
 }
