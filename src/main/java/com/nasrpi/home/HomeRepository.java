@@ -203,4 +203,67 @@ public class HomeRepository {
 				.body(resource);
 	}
 
+	public List<GetContentsModel> searchInCurrentDirectory(final SearchModel searchModel) {
+
+		List<GetContentsModel> getContentsArray = new ArrayList<GetContentsModel>();
+
+		final String currentDirectory = searchModel.getCurrentPath();
+		final String searchKey = searchModel.getSearchKey();
+
+		try {
+			Stream<Path> file = Files.walk(Paths.get(currentDirectory)).filter(Files::isRegularFile);
+			List<String> fileArray = file.map(x -> x.toString()).collect(Collectors.toList());
+
+			for (String filePath : fileArray) {
+				if (filePath.contains(searchKey)) {
+					GetContentsModel getContents = new GetContentsModel();
+					getContents.setFilePath(filePath);
+					getContents.setDirectory(false);
+
+					getContentsArray.add(getContents);
+				}
+
+			}
+
+			Stream<Path> directory = Files.walk(Paths.get(currentDirectory)).filter(Files::isDirectory);
+			List<String> directoryArray = directory.map(x -> x.toString()).collect(Collectors.toList());
+
+			for (String directoryPath : directoryArray) {
+				if (directoryPath.contains(searchKey)) {
+					GetContentsModel getContents = new GetContentsModel();
+					getContents.setFilePath(directoryPath);
+					getContents.setDirectory(true);
+
+					getContentsArray.add(getContents);
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return getContentsArray;
+
+	}
+
+	public List<GetSpaceModel> getSpaceUsage(String rootPath) {
+
+		List<GetSpaceModel> getSpaceArray = new ArrayList<GetSpaceModel>();
+		GetSpaceModel getSpace = new GetSpaceModel();
+		File freeSpace = new File(rootPath);
+
+		try {
+			getSpace.setTotalSpace(freeSpace.getTotalSpace());
+			getSpace.setFreeSpace(freeSpace.getFreeSpace());
+			getSpace.setUsedSpace(getSpace.getTotalSpace() - getSpace.getFreeSpace());
+
+			getSpaceArray.add(getSpace);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return getSpaceArray;
+	}
+
 }

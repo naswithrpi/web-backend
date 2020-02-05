@@ -60,6 +60,11 @@ public class HomeController {
 	public boolean createDirectory(@RequestBody final String directoryPath) {
 		return homeRepository.createDirectory(directoryPath);
 	}
+	
+	@RequestMapping(value = "/search", method = RequestMethod.POST)
+	public List<GetContentsModel> search(@RequestBody final SearchModel searchModel) {
+		return homeRepository.searchInCurrentDirectory(searchModel);
+	}
 
 	@RequestMapping(value = "/moveFolder", method = RequestMethod.POST, produces = KeyConstants.APPLICATION_JSON)
 	public boolean moveFolder(@RequestBody final MoveModel moveModel) {
@@ -69,6 +74,11 @@ public class HomeController {
 	@RequestMapping(value = "/moveFile", method = RequestMethod.POST, produces = KeyConstants.APPLICATION_JSON)
 	public boolean moveFile(@RequestBody final MoveModel moveModel) {
 		return homeRepository.moveFile(moveModel.getSource(), moveModel.getDestination());
+	}
+	
+	@RequestMapping(value = "/getSpaceUsage", method = RequestMethod.GET, produces = "application/json")
+	public List<GetSpaceModel> getSpaceUsage() {
+		return homeRepository.getSpaceUsage(KeyConstants.ROOT_PATH);
 	}
 
 	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST, produces = KeyConstants.APPLICATION_JSON)
