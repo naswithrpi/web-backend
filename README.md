@@ -6,3 +6,8 @@
 2. Import the project in Eclipse as an existing Maven Project
 3. Run **NasrpiWebApplication.java** as a **Java Application**
 4. Navigate to [Swagger Documentation](http://localhost:8080/swagger-ui.html)
+
+## Login Credentials
+
+- **Username:** nasrpi
+- **Password:** password
