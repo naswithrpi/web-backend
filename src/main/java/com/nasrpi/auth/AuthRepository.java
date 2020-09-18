@@ -80,7 +80,7 @@ public class AuthRepository {
 	public boolean createPassword(final String username, final String password) {
 		
 		//encode password while storing
-		
+		System.out.println("Credentials: " + username + " " + password);
 		String credential = username.trim() + AuthConstants.WHITE_SPACE + password.trim() + AuthConstants.NEW_LINE;
 		List<String> configArray = authUtils.readConfigFile(Paths.get(AuthConstants.IS_CONFIG));
 		
