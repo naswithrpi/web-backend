@@ -9,6 +9,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,10 +23,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -39,6 +48,9 @@ import com.nasrpi.filesharing.UploadFileResponseModel;
 
 @Repository
 public class HomeRepository {
+	
+	@Autowired
+	JdbcTemplate jdbcTemplate;
 
 	public List<GetContentsModel> getContents(final String path) {
 
@@ -264,6 +276,42 @@ public class HomeRepository {
 		}
 
 		return getSpaceArray;
+	}
+	
+	public List<UserActivityModel> getActivity() {
+		List<UserActivityModel> activityModelList = new ArrayList<UserActivityModel>();
+		
+		String query = "select username, activity from user_activity order by activity_id desc limit 7;";
+		activityModelList = jdbcTemplate.query(query, new ActivityRowMapper());
+		
+		System.out.println(activityModelList);
+		return activityModelList;
+		
+	}
+	
+	public boolean updateActivity(UserActivityModel userActivityModel) {
+		
+		String INSERT_SQL = "INSERT INTO user_activity(username, activity) values(?,?)";
+		
+		KeyHolder holder = new GeneratedKeyHolder();
+		jdbcTemplate.update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				PreparedStatement ps = connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);
+				ps.setString(1, userActivityModel.getUsername());
+				ps.setString(2, userActivityModel.getActivity());
+				return ps;
+			}
+
+		}, holder);
+
+		int newUserId = holder.getKey().intValue();
+		System.out.println(newUserId);
+		if(newUserId != 0)
+			return true;
+		else
+			return false;
+		
 	}
 
 }

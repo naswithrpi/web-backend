@@ -93,4 +93,15 @@ public class HomeController {
 		return homeRepository.downloadFile(downloadFileModel.getFileName(), downloadFileModel.getFilePath(), request,
 				fileStorageService);
 	}
+	
+	@RequestMapping(value="/getUserActivity", method = RequestMethod.GET)
+	public List<UserActivityModel> getUserActivity() {
+		return homeRepository.getActivity();
+	}
+	
+	@RequestMapping(value="/updateUserActivity", method = RequestMethod.POST)
+	public boolean updateUserActivity(@RequestBody final UserActivityModel userActivityModel) {
+		return homeRepository.updateActivity(userActivityModel);
+	}
+
 }
